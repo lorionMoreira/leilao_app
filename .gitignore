@@ -1,0 +1,75 @@
+# Global settings #
+###################
+*.log
+*.tmp
+*.rar
+*.class
+.DS_Store
+Thumbs.db
+
+# Backend (Spring Boot) - urnabackend #
+#######################################
+/urnabackend/target/
+/urnabackend/*.war
+/urnabackend/*.jar
+/urnabackend/*.ear
+/urnabackend/hs_err_pid*
+
+# Maven #
+#########
+/urnabackend/pom.xml.tag
+/urnabackend/pom.xml.releaseBackup
+/urnabackend/pom.xml.versionsBackup
+/urnabackend/pom.xml.next
+/urnabackend/release.properties
+/urnabackend/dependency-reduced-pom.xml
+/urnabackend/buildNumber.properties
+/urnabackend/.mvn/timing.properties
+/urnabackend/.mvn/wrapper/maven-wrapper.jar
+
+# IDEs for Java #
+#################
+/urnabackend/.idea/
+/urnabackend/*.iml
+/urnabackend/*.iws
+/urnabackend/*.ipr
+/urnabackend/.settings/
+/urnabackend/.project
+/urnabackend/.classpath
+/urnabackend/nbproject/private/
+/urnabackend/build/
+/urnabackend/nbbuild/
+/urnabackend/dist/
+/urnabackend/nbdist/
+/urnabackend/.nb-gradle/
+
+# Frontend (React) - projetoUrna/frontrnf_urna_startekit #
+#########################################################
+/projetoUrna/frontend_urna_starterkit/node_modules/
+/projetoUrna/frontend_urna_starterkit/build/
+/projetoUrna/frontend_urna_starterkit/.cache/
+/projetoUrna/frontend_urna_starterkit/.env.local
+/projetoUrna/frontend_urna_starterkit/.env.development.local
+/projetoUrna/frontend_urna_starterkit/.env.test.local
+/projetoUrna/frontend_urna_starterkit/.env.production.local
+
+# IDEs for JavaScript #
+#######################
+/projetoUrna/frontend_urna_starterkit/.idea/
+/projetoUrna/frontend_urna_starterkit/*.iml
+/projetoUrna/frontend_urna_starterkit/*.iws
+/projetoUrna/frontend_urna_starterkit/*.ipr
+/projetoUrna/frontend_urna_starterkit/.vscode/
+
+# Logs #
+########
+/projetoUrna/frontend_urna_starterkit/logs/
+/projetoUrna/frontend_urna_starterkit/*.log
+/projetoUrna/frontend_urna_starterkit/npm-debug.log*
+/projetoUrna/frontend_urna_starterkit/yarn-debug.log*
+/projetoUrna/frontend_urna_starterkit/yarn-error.log*
+
+# OS #
+######
+/projetoUrna/frontend_urna_starterkit/.DS_Store
+/projetoUrna/frontend_urna_starterkit/Thumbs.db

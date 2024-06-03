@@ -1,0 +1,38 @@
+.btn-pagination {
+    background-color: #f0f0f0;
+    color: black;
+    border: 1px solid gray;
+    padding: 5px 10px;
+    margin: 0 2px;
+}
+.btn-pagination.active {
+    color: aqua;
+}
+.btn-pagination:hover {
+    color: red;
+}
+
+.btn-table-procurar{
+    background-color: #556ee6 !important;
+    border: 2px solid #556ee6 !important;
+    border-radius: 30px !important;
+}
+
+.btn-table-procurar:hover{
+    background-color: #485ec4 !important;
+    border: 2px solid #485ec4 !important;
+}
+
+.btn-table-procurar-constrast{
+    background-color: #fff !important;
+    border: 2px solid #556ee6 !important;
+    color: black !important;
+    border-radius: 30px !important;
+}
+
+.btn-table-procurar-constrast:hover{
+    background-color: #f1ecec !important;
+    border: 2px solid #556ee6 !important;
+    color: black !important;
+    border-radius: 30px !important;
+}

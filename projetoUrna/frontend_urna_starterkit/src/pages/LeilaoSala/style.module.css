@@ -1,0 +1,35 @@
+/* Add this CSS to your stylesheet */
+.image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .top-left-number {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(31, 46, 133, 0.5);
+    color: white;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  
+  
+  .chatInputNew {
+    padding-right: 0px !important ;
+  }
+  .cardImgChat { 
+
+    width: min-content !important ;
+    max-height: 400px;
+  }
+  .margin-left-lor {
+    width: 50%;
+    margin-right: 10px;
+  }
+
+  .lanceDado {
+    color: red;
+  }

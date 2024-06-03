@@ -1,0 +1,7 @@
+.myicon {
+    cursor: pointer;
+}
+.myButton {
+    display: flex;
+    justify-content: space-between;
+}

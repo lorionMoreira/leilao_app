@@ -1,0 +1,11 @@
+.myButton {
+    display: flex;
+    justify-content: space-between;
+}
+.myLine {
+    color: #556ee6;
+}
+.myLineSelf {
+    color:#556ee6;
+    font-weight: 600;
+}
