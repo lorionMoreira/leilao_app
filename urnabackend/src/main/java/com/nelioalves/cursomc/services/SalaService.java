@@ -95,7 +95,7 @@ public class SalaService {
         // Set the adjusted date and time
         obj.setDataCriacao(calendar.getTime());
         obj.setNcurrent(obj.getNmax());
- 
+        obj.setEstado("inicio");
         return repo.save(obj);
     }
     /*

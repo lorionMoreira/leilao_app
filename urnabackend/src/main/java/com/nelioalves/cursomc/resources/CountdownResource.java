@@ -47,7 +47,7 @@ public class CountdownResource {
     private SimpMessagingTemplate messagingTemplate;
     
     @MessageMapping("/startcountdown")
-    public void startcountdown(@Payload Map<String, Object> data ) {
+    public synchronized void startcountdown(@Payload Map<String, Object> data ) {
     	//donebyscriptpython the first time
     	Object uuidValue = data.get("uuid");
     	Object managerValue = data.get("manager");
@@ -55,59 +55,56 @@ public class CountdownResource {
     	
     	
     	String uuid = (String) uuidValue;
-    	
     	Sala mysala =  salaservice.findByUuid(uuid);
-    	
     	String manager2 = mysala.getEstado();
-    	
     	String manager = (String) managerValue;   
     	
     	Integer produtoId = (Integer) produtoIdValue;   
     	System.out.println(manager);
     	
-      	
-        CountdownInfo countdownInfo = countdowns.get(uuid);
-        
-        // put this in a new service
-   	 	Date currentDate = Calendar.getInstance().getTime();
-   	 	MessageType messageType = MessageType.CHAT;
-   	 	Sala sala = salaservice.findByUuid(uuid);
- 	   	long timestamp = System.currentTimeMillis();
- 	   	
-        if(manager.equals("first")) {
-        	Message message = new Message(timestamp,uuid,"Server","A primeira rodada começou!",currentDate.toString(),messageType);
-        	messagingTemplate.convertAndSendToUser(uuid,"/server",message);
-        	sala.setEstado(manager);
-        	salaservice.updateObject(sala);
-        }else if(manager.equals("second")) {
-        	Message message = new Message(timestamp,uuid,"Server","Uma nova rodada começou!",currentDate.toString(),messageType);
-    		messagingTemplate.convertAndSendToUser(uuid,"/server",message);
-        	sala.setEstado(manager);
-        	salaservice.updateObject(sala);
-        }else if (manager.equals("final")) {
-        	Message message = new Message(timestamp,uuid,"Server","As rodadas acabaram. obrigado a todos!",currentDate.toString(),messageType);
-    		messagingTemplate.convertAndSendToUser(uuid,"/server",message);
-        	sala.setEstado(manager);
-        	salaservice.updateObject(sala);
+        synchronized (uuid.intern()) {
+            CountdownInfo countdownInfo = countdowns.get(uuid);
+            
+            // put this in a new service
+            Date currentDate = Calendar.getInstance().getTime();
+            MessageType messageType = MessageType.CHAT;
+            Sala sala = salaservice.findByUuid(uuid);
+            long timestamp = System.currentTimeMillis();
+            
+            if(manager.equals("first")) {
+                Message message = new Message(timestamp,uuid,"Server","A primeira rodada começou!",currentDate.toString(),messageType);
+                messagingTemplate.convertAndSendToUser(uuid,"/server",message);
+                sala.setEstado(manager);
+                salaservice.updateObject(sala);
+            }else if(manager.equals("second")) {
+                Message message = new Message(timestamp,uuid,"Server","Uma nova rodada começou!",currentDate.toString(),messageType);
+                messagingTemplate.convertAndSendToUser(uuid,"/server",message);
+                sala.setEstado(manager);
+                salaservice.updateObject(sala);
+            }else if (manager.equals("final")) {
+                Message message = new Message(timestamp,uuid,"Server","As rodadas acabaram. obrigado a todos!",currentDate.toString(),messageType);
+                messagingTemplate.convertAndSendToUser(uuid,"/server",message);
+                sala.setEstado(manager);
+                salaservice.updateObject(sala);
 
-    		return;
-        }
-        //
-        
-        if (countdownInfo == null) {
-        	// contador renovou
-            CountdownInfo countdownInfo2 = new CountdownInfo(COUNTDOWN_DURATION,true,uuid);
-            countdowns.put(uuid, countdownInfo2);
-                        
-            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleAtFixedRate(() -> updateCountdown(uuid,produtoId), 0, 1, TimeUnit.SECONDS);
-            countdownInfo2.setExecutor(executor); 	
-        }else {
-        	// lançou novo sem contador ter renovado
+                return;
+            }
+            //
+            
+            if (countdownInfo == null) {
+                // contador renovou
+                CountdownInfo countdownInfo2 = new CountdownInfo(COUNTDOWN_DURATION,true,uuid);
+                countdowns.put(uuid, countdownInfo2);
+                            
+                ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+                executor.scheduleAtFixedRate(() -> updateCountdown(uuid,produtoId), 0, 1, TimeUnit.SECONDS);
+                countdownInfo2.setExecutor(executor); 	
+            }else {
+                // lançou novo sem contador ter renovado
 
-        	countdownInfo.setCurrentCountdown(COUNTDOWN_DURATION);
+                countdownInfo.setCurrentCountdown(COUNTDOWN_DURATION);
+            }
         }
-        
     }
     
     @MessageMapping("/handlemore30")
