@@ -66,7 +66,7 @@ const SalasGerenciar = () => {
   };
 
   const [formData, setFormData] = useState({
-    nome: '',
+    nome: '', 
     dataAbertura: '',
     dataFechamento: '',
     ativa: ''
