@@ -8,7 +8,7 @@ let API_URL2;
 if(process.env.REACT_APP_DEFAULTAUTH == 'dev'){
    API_URL2 = "http://localhost:8080";
 }else{
-   API_URL2 = "http://saudeon.giize.com:8080";
+   API_URL2 = "https://myec2lorion.zapto.org";
 }
 
 //process.env.REACT_APP_DEFAULTAUTH == 'prod'
