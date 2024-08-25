@@ -46,7 +46,7 @@ Thumbs.db
 # Frontend (React) - projetoUrna/frontrnf_urna_startekit #
 #########################################################
 /projetoUrna/frontend_urna_starterkit/node_modules/
-/projetoUrna/frontend_urna_starterkit/build/
+
 /projetoUrna/frontend_urna_starterkit/.cache/
 /projetoUrna/frontend_urna_starterkit/.env.local
 /projetoUrna/frontend_urna_starterkit/.env.development.local
