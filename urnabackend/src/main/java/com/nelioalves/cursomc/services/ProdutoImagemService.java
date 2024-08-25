@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 @Service
 public class ProdutoImagemService {
 	// melhorar a implementação do arquivo com : https://github.com/lokeshgupta1981/Spring-Boot-Examples/blob/master/spring-react-file-upload/SpringBootFileUploadApplication/src/main/java/com/boot/rest/base/payload/FileUploadResponse.java
-	private static final String IMAGE_UPLOAD_PATH = "C:\\MAMP\\htdocs\\projetoPai2\\springboot\\urnabackend\\images";
+	//private static final String IMAGE_UPLOAD_PATH = "C:\\MAMP\\htdocs\\projetoPai2\\springboot\\urnabackend\\images";
 	
 	public ProdutoImagemService() throws IOException {}
 	
@@ -46,7 +46,7 @@ public class ProdutoImagemService {
 	
 	public ProdutoImage saveImage(MultipartFile file, Produto produto) {
 		
-		String namePath = IMAGE_UPLOAD_PATH + System.currentTimeMillis() + file.getOriginalFilename();
+		//String namePath = IMAGE_UPLOAD_PATH + System.currentTimeMillis() + file.getOriginalFilename();
 		
 	    if (!Files.exists(UPLOAD_PATH)) {
 	        try {
