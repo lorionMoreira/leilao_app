@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import React, { useState,useRef } from "react"
+import styles from "./style.module.css";
 import { del, get, post, postFile } from "../../../helpers/api_helper";
 import axios from 'axios';
 import { useSelector, useDispatch } from "react-redux";
@@ -50,8 +51,10 @@ const SalasGerenciar = () => {
   const [activeTab, setactiveTab] = useState("1")
 
   const [products, setProducts] = useState([]);
-  const [products2, setProducts2] = useState([]);
+
+  const [displayFilename, setDisplayFilename] = useState('Nenhum arquivo selecionado');
   const [productImage, setProductImage] = useState(null);
+  const [isImageValid, setIsImageValid] = useState(true); 
 
   const { demoData } = useSelector(state => ({
     demoData: state.Login.demoData,
@@ -61,10 +64,23 @@ const SalasGerenciar = () => {
 
   const handleImageChange = (event) => {
 
-    setProductImage(event.target.files[0]);
+    const file = event.target.files[0];
 
+    if (file) {
+      setProductImage(event.target.files[0]);
+      setDisplayFilename(event.target.files[0].name);
+      setIsImageValid(true); 
+    } else {
+      setProductImage(event.target.files[0]);
+      setDisplayFilename(event.target.files[0].name);
+      setIsImageValid(false);
+    }
+    
   };
-
+  const fileInputRef = useRef(null);
+  const calculateSubTotal = () => {
+    return products.reduce((sum, product) => sum + (product.valor || 0), 0);
+  };
   const [formData, setFormData] = useState({
     nome: '',
     descricao: '',
@@ -78,6 +94,13 @@ const SalasGerenciar = () => {
     setFormData({ ...formData, [id]: value });
   };
 
+  const isButtonDisabled = () => {
+    // Check if formData is filled out and products array has at least one item
+    const isFormDataFilled = Object.values(formData).every(value => value !== '');
+    const isProductsNotEmpty = products.length > 0;
+    return !(isFormDataFilled && isProductsNotEmpty);
+  };
+
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
@@ -87,42 +110,60 @@ const SalasGerenciar = () => {
       nome: '',
       especificacao: '',
       valor: '',
-      ativo:  '',
+      tipo:  '',
       imagem: ''
     },
     validationSchema: Yup.object({
       nome: Yup.string().required("Por favor, digite o nome do tipo de componente"),
       especificacao: Yup.string().required("Por favor, digite a especificacao do tipo de componente"),
       valor: Yup.number().required("Por favor, digite o valor do tipo de componente"),
-
+      tipo: Yup.string().required("Por favor, selecione uma opção"), // Validate tipo field
+      
     }),
     onSubmit: (values) => {
       const handleSubmission = async () => {
+        if (!productImage) {
+          setIsImageValid(false); // Validate image before submission
+          alert('selecione uma imagem do produto')
+          return; // Stop submission if the image is invalid
+        }
+
         const newProduct = {
           nome: values.nome,
           especificacao: values.especificacao,
           valor: values.valor,
-          ativo: values.tipo,
+          tipo: values.tipo,
           imagem: productImage != null ? productImage : null
         };
         setProducts([...products, newProduct]);
 
-        /*
-        const newProduct2 = {
-          nome: values.nome,
-          especificacao: values.especificacao,
-          valor: values.valor,
-          ativo: values.tipo,
-        };
-        setProducts2([...products2, newProduct2]);
-        */
+        validation.resetForm();
+        alert('Arquivo enviado com sucesso!')
+        if (fileInputRef.current) {
+
+          fileInputRef.current.value = '';
+          setProductImage(null); // Clear the image state as well
+          setDisplayFilename('Nenhum arquivo selecionado'); 
+        }
       };
     
       handleSubmission();
   }
   });
 
+  // Function to format date as dd/mm/yyyy
+  const formatDate = (dateString) => {
+    if (!dateString) return ''; 
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return new Intl.DateTimeFormat('pt-BR', options).format(new Date(dateString));
+  };
 
+  // Function to format date as dd/mm/yyyy hh:mm
+  const formatDateTime = (dateString) => {
+    if (!dateString) return ''; 
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Intl.DateTimeFormat('pt-BR', options).format(new Date(dateString));
+  };
 
   const sendForm = async () => {
     console.log('foi1')
@@ -306,6 +347,7 @@ const SalasGerenciar = () => {
                             onSubmit={(e) => {
                               e.preventDefault();
                               validation.handleSubmit();
+                              
                               return false;
                             }}
                         >
@@ -372,7 +414,7 @@ const SalasGerenciar = () => {
                                 ) : null}
                               </Col>
                               <Col md={6}>
-                                <Label className="form-label">ativo</Label>
+                                <Label className="form-label">ativo*</Label>
                                 <Input
                                 type="select"
                                 name="tipo"
@@ -394,18 +436,25 @@ const SalasGerenciar = () => {
                           </div>
                           <div className="mb-3">
                             <Row>
-                              <Col md={6}>
-                              <Label className="form-label">Imagem</Label>
-                                <Input
-                                  name="imagem"
-                                  className="form-control"
-                                  placeholder="Selecione a imagem do produto"
-                                  accept="image/*"
+                            <Col md={6}>
+                              <div className={styles.customFile}>
+                                <input
+                                  ref={fileInputRef}
                                   type="file"
+                                  className={styles.customFileInput}
+                                  id="customFile"
                                   onChange={handleImageChange}
-
+                                  onBlur={validation.handleBlur}
                                 />
-                              </Col>
+                                <label className={styles.customFileLabel} htmlFor="customFile">
+                                  {displayFilename}
+                                </label>
+                                {!isImageValid ? (
+                                    <div className={styles.customInvalidFeedback}>Por favor, selecione um arquivo</div>
+                                  ) : null}
+                              </div>
+
+                            </Col>
                             </Row>
                           </div>
                           <div className="d-flex justify-content-end">
@@ -468,7 +517,7 @@ const SalasGerenciar = () => {
                                       </h6>
                                     </td>
                                     <td>
-                                      $ 675
+                                      ${calculateSubTotal().toFixed(2)}
                                     </td>
                                   </tr>
                                   <tr>
@@ -478,7 +527,7 @@ const SalasGerenciar = () => {
                                           <i className="fas fa-shipping-fast me-2" />{" "}
                                           Nome da sala:{" "} {formData.nome}
                                           <span className="float-end">
-                                            Data de abertura: {formData.dataAbertura}
+                                            Data de abertura: {formatDate(formData.dataAbertura)}
                                           </span>
                                         </h5>
                                       </div>
@@ -488,10 +537,25 @@ const SalasGerenciar = () => {
                                     <td colSpan="2">
                                       <h6 className="m-0 text-end">Horário máximo de entrada</h6>
                                     </td>
-                                    <td>{formData.dataFechamento}</td>
+                                    <td>{formatDateTime(formData.dataFechamento)}</td>
                                   </tr>
+
                                 </tbody>
-                              </Table>
+
+
+                                </Table>
+                                <div className="d-flex justify-content-end">
+                                  <Button
+                                    to="/ecommerce-checkout"
+                                    className="btn btn-success"
+                                    onClick={() => {
+                                      sendForm();
+                                    }}
+                                    disabled={isButtonDisabled()} // Disable button if the conditions are not met
+                                  >
+                                    <i className="mdi mdi-truck-fast me-1" /> Cadastrar sala{" "}
+                                  </Button>
+                                </div>
                             </div>
                           </CardBody>
                         </Card>
@@ -511,15 +575,7 @@ const SalasGerenciar = () => {
                   </Col>
                   <Col sm="6">
                     <div className="text-sm-end">
-                      <Button
-                        to="/ecommerce-checkout"
-                        className="btn btn-success"
-                        onClick={() => {
-                          sendForm();
-                        }}
-                      >
-                        <i className="mdi mdi-truck-fast me-1" /> Cadastrar sala{" "}
-                      </Button>
+
                     </div>
                   </Col>
                 </Row>

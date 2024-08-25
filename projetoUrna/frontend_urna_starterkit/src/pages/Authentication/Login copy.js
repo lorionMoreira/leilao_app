@@ -12,7 +12,10 @@ import withRouter from "components/Common/withRouter";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 
-
+//Social Media Imports
+import { GoogleLogin } from "react-google-login";
+// import TwitterLogin from "react-twitter-auth"
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
 // actions
 import { loginUser, socialLogin } from "../../store/actions";
@@ -21,7 +24,8 @@ import { loginUser, socialLogin } from "../../store/actions";
 import profile from "assets/images/profile-img.png";
 import logo from "assets/images/logo.svg";
 
-
+//Import config
+import { facebook, google } from "../../config";
 
 const Login = props => {
 
@@ -212,7 +216,11 @@ const Login = props => {
               </Card>
               <div className="mt-5 text-center">
                 <p>
-
+                  Não tem uma conta ?{" "}
+                  <Link to="/register" className="fw-medium text-primary">
+                    {" "}
+                    Signup now{" "}
+                  </Link>{" "}
                 </p>
 
               </div>
