@@ -7,6 +7,7 @@
 .DS_Store
 Thumbs.db
 
+/images
 # Backend (Spring Boot) - urnabackend #
 #######################################
 /urnabackend/target/
