@@ -298,9 +298,16 @@ const Chat = () => {
   };
   const connect =(response)=>{
 
+    let API_URL2;
+
+    if(process.env.REACT_APP_DEFAULTAUTH == 'dev'){
+      API_URL2 = "http://localhost:8080";
+   }else{
+      API_URL2 = "https://myec2lorion.zapto.org";
+   }
     //let Sock = new SockJS(`http://localhost:8080/websocket?token=${response}&uuid=${uuid}`);
 
-    let Sock = new SockJS(`http://localhost:8080/websocket?token=${response}`);
+    let Sock = new SockJS(`${API_URL2}/websocket?token=${response}`);
     stompClient = over(Sock);
     stompClient.connect({uuid: uuid},onConnected, onError);
   }
