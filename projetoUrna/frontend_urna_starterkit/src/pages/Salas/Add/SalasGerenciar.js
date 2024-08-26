@@ -171,6 +171,15 @@ const SalasGerenciar = () => {
 
         const apiUrl =process.env.REACT_APP_API_URL
 
+        let API_URL2;
+
+        if(process.env.REACT_APP_DEFAULTAUTH == 'dev'){
+          API_URL2 = "http://localhost:8080";
+       }else{
+          API_URL2 = "https://myec2lorion.zapto.org";
+       }
+       
+
         const response = await post(`/api/salas/salvar/`, formData);
         if(response.id){
           const salaId = response.id;
@@ -182,7 +191,7 @@ const SalasGerenciar = () => {
           formDataf.append('valor', products[i].valor);
           formDataf.append('file', products[i].imagem);
           
-          const response2 = await axios.post(`${apiUrl}/api/produtos/salvar2/${salaId}`, formDataf,{
+          const response2 = await axios.post(`${API_URL2}/api/produtos/salvar2/${salaId}`, formDataf,{
             headers: {
               'Content-Type': 'multipart/form-data',
               'Authorization': mytoken
