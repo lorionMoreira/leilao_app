@@ -14,6 +14,6 @@ public class CursomcApplication {
         SpringApplication.run(CursomcApplication.class, args);
         TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
         // Execute the Python script
-        PythonScriptRunner.runPythonScript();
+        //PythonScriptRunner.runPythonScript();
     }
 }
