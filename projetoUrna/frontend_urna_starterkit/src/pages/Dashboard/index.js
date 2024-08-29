@@ -32,7 +32,6 @@ const [paginationKey, setPaginationKey] = useState(Date.now());
 
 const columns = useMemo(
   () => [
-
     {
       Header: 'Nome da Sala',
       accessor: 'nome',
@@ -40,42 +39,90 @@ const columns = useMemo(
     {
       Header: 'Data de Abertura da sala',
       accessor: 'dataCriacao',
+      Cell: ({ value }) => formatDate(value),
     },
     {
       Header: 'Data e horario maximo permitido de entrada',
       accessor: 'dataFechamento',
+      Cell: ({ value }) => formatDateTime(value),
     },
     {
-      Header: 'Ações',
+      Header: 'Estado da sala',
       Cell: ({ row }) => (
         <div className="d-flex justify-content-center">
-
-
-          <Link to={`/componentes/adicionar2/${row.original.id}`} className="d-inline-block mx-2">
-            <i className="bx bx-send" style={{ fontSize: '24px', color: '#556ee6'  }}></i>
-          </Link>
-
-          <Link to={`/componentes/adicionar2/${row.original.id}`} className="d-inline-block mx-2">
-            <i className="bx bx-pencil" style={{ fontSize: '24px', color: '#556ee6'  }}></i>
-          </Link>
-
-
-          <a
-            className="d-inline-block mx-2"
-            onClick={() => handleRemove(row.original.id)}
-          >
-            <i className="bx bx-trash-alt" style={{ fontSize: '24px', color: '#DC143C'  }}></i>
-          </a>
-
-
+           {row.original?.estado }
         </div>
       ),
     },
+    {
+      Header: 'Ações',
+      Cell: ({ row }) => {
+        const currentDate = new Date();
+        const fechamentoDate = new Date(row.original?.dataFechamento);
 
+        const isDisabled = currentDate > fechamentoDate;
+
+        return (
+          <div className="d-flex justify-content-center">
+            <Link
+              to={`/leiloes/sala/${row.original.uuid}`}
+              className={`d-inline-block mx-2 ${isDisabled ? 'disabled' : ''}`}
+              onClick={(e) => isDisabled && e.preventDefault()}
+              style={{ fontSize: '24px', color: isDisabled ? '#ccc' : '#556ee6' }}
+            >
+              <i className="bx bx-send"></i>
+            </Link>
+            <Link
+              to={`/salas/editar/${row.original.uuid}`}
+              className={`d-inline-block mx-2 `}
+              style={{ fontSize: '24px'}}
+            >
+              <i className="bx bx-pencil"></i>
+            </Link>
+
+            <a
+            className="d-inline-block mx-2"
+            onClick={() => handleRemove(row.original.uuid)}
+            >
+            <i className="bx bx-trash-alt" style={{ fontSize: '24px', color: '#DC143C'  }}></i>
+            </a>
+          </div>
+        );
+      },
+    },
   ],
   []
 );
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+  return new Date(dateString).toLocaleDateString('pt-BR', options);
+};
+const formatDateTime = (dateString) => {
+  const date = new Date(dateString);
+  
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
+  const year = date.getFullYear();
+  
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+};
 
+const handleRemove = async (uuid) => {
+  try {
+    const response = await del(`/api/salas/delete/${uuid}`);
+    fetchUnities(0);
+  } catch (error) {
+    if (error?.message) {
+      alert(message)
+    }
+  }
+
+
+}
 const fetchUnities = async (page) => {
   try {
     setLoading(true);
@@ -85,6 +132,8 @@ const fetchUnities = async (page) => {
         size: perPage,
       },
     });
+    console.log('response');
+    console.log(response.content);
 
     setData(response.content);
     setTotalRows(response.totalPages)

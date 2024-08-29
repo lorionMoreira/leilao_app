@@ -179,11 +179,12 @@ const SidebarContent = props => {
             </Link>
             <ul className="sub-menu">
               <li>
-                <Link to="/salas/adicionar">{props.t("Criar sala")}</Link>
+                <Link to="/dashboard">{props.t("Minhas salas")}</Link>
               </li>
               <li>
-                <Link to="/salas/lista">{props.t("Editar sala")}</Link>
+                <Link to="/salas/adicionar">{props.t("Criar sala")}</Link>
               </li>
+
             </ul>
           </li>
 

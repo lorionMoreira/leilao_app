@@ -3,13 +3,10 @@ import accessToken from "./jwt-token-access/accessToken";
 
 //pass new generated access token here
 const token = accessToken;
-let API_URL2;
-//apply base url for axios
-if(process.env.REACT_APP_DEFAULTAUTH == 'dev'){
-   API_URL2 = "http://localhost:8080";
-}else{
-   API_URL2 = "https://myec2lorion.zapto.org";
-}
+
+export const API_URL2 = process.env.REACT_APP_DEFAULTAUTH === 'dev'
+  ? "http://localhost:8080"
+  : "https://myec2lorion.zapto.org";
 
 //process.env.REACT_APP_DEFAULTAUTH == 'prod'
 //const API_URL = process.env.API_URL ;

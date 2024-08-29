@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nelioalves.cursomc.domain.Produto;
 import com.nelioalves.cursomc.domain.User;
+import com.nelioalves.cursomc.dto.ProdutoDTO;
+import com.nelioalves.cursomc.mapper.ProdutoMapper;
 import com.nelioalves.cursomc.repositories.ProdutoRepository;
 import com.nelioalves.cursomc.security.UserSS;
+import com.nelioalves.cursomc.services.exceptions.AuthorizationException;
 import com.nelioalves.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -23,6 +27,12 @@ public class ProdutoService {
 	
     @Autowired
     private SalaService salaService;
+
+	@Autowired
+    private ClienteService clienteService;
+
+	@Autowired
+    private ProdutoMapper produtoMapper;
     
     
 	public Produto find(Integer id) {
@@ -64,9 +74,15 @@ public class ProdutoService {
 
 
     }
-    
-    public List<Produto> findProdutosBySalaId(Integer salaId) {
+
+	public List<Produto> findProdutosBySalaId(Integer salaId) {
         return repo.findBySalaId(salaId);
+		
+    }
+    
+    public List<ProdutoDTO> findProdutosBySalaId2(Integer salaId) {
+        List<Produto> produtos = repo.findBySalaId(salaId);
+		return produtos.stream().map(produtoMapper::convertToDto).collect(Collectors.toList());
     }
     
 	@Transactional
@@ -74,6 +90,23 @@ public class ProdutoService {
 		obj = repo.save(obj);
 		return obj;
 	}
+
+	@Transactional
+    public void deleteById(Integer id) {
+
+        Produto produto = find(id);
+
+        User user = clienteService.findMySelf();
+        if (!produto.getUser().equals(user)) {
+            throw new AuthorizationException("You are not authorized to delete this Produto.");
+        }
+
+        try {
+            repo.delete(produto);
+        } catch (Exception e) {
+            throw new AuthorizationException("An error occurred while trying to delete the Produto.", e);
+        }
+    }
 	
 	public Produto confProduto(Produto obj,User user) {
 		

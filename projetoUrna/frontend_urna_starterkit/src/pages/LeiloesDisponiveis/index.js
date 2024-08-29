@@ -52,16 +52,24 @@ const columns = useMemo(
       accessor: 'nome',
     },
     {
-      Header: 'Autor',
+      Header: 'Criador',
       accessor: 'user.nome',
     },
     {
       Header: 'Data de Abertura da sala',
-      accessor: 'dataCriacao',
+      Cell: ({ row }) => (
+        <div className="d-flex justify-content-center">
+          {formatDateTime(row.original?.dataAbertura)}
+        </div>
+      ),
     },
     {
       Header: 'Data e horario maximo permitido de entrada',
-      accessor: 'dataFechamento',
+      Cell: ({ row }) => (
+        <div className="d-flex justify-content-center">
+          {formatDateTime(row.original?.dataFechamento)}
+        </div>
+      ),
     },
     {
       Header: 'Lugares disponíveis',
@@ -72,24 +80,9 @@ const columns = useMemo(
       Cell: ({ row }) => (
         <div className="d-flex justify-content-center">
 
-
-
           <Link to={`/leiloes/sala/${row.original.uuid}`} className="d-inline-block mx-2">
             <i className="bx bx-send" style={{ fontSize: '24px', color: '#556ee6'  }}></i>
           </Link>
-
-          <Link to={`/componentes/adicionar2/${row.original.id}`} className="d-inline-block mx-2">
-            <i className="bx bx-pencil" style={{ fontSize: '24px', color: '#556ee6'  }}></i>
-          </Link>
-
-
-          <a
-            className="d-inline-block mx-2"
-            onClick={() => handleRemove(row.original.id)}
-          >
-            <i className="bx bx-trash-alt" style={{ fontSize: '24px', color: '#DC143C'  }}></i>
-          </a>
-
 
         </div>
       ),
@@ -98,20 +91,19 @@ const columns = useMemo(
   ],
   []
 );
-/*
-const sendMessage = () => {
-  stompClient.send('/app/getListLeiloes', {}, JSON.stringify({}));
+const formatDateTime = (dateString) => {
+  const date = new Date(dateString);
+  
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
+  const year = date.getFullYear();
+  
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 };
-
-useEffect(() => {
-  const intervalId = setInterval(() => {
-    sendMessage();
-  }, 3000);
-
-  // Clear the interval when the component is unmounted or no longer needed
-  return () => clearInterval(intervalId);
-}, []);
-*/
 const getTickets = async () => {
   try {
     setLoading(true);
@@ -132,7 +124,6 @@ const connect =(response)=>{
  }else{
     API_URL2 = "https://myec2lorion.zapto.org";
  }
-
   let Sock = new SockJS(`${API_URL2}/websocket?token=${response}`);
   stompClient = over(Sock);
   stompClient.connect({dsadsa: 'saddas'},onConnected, onError);
@@ -199,7 +190,7 @@ const onProductMessageReceived = (message) => {
             breadcrumbItem={props.t("LeiloesDisponiveis")}
           />
               <Card className="p-3">
-              <CardTitle>Lista de leilões</CardTitle>
+                <CardTitle>Lista de leilões</CardTitle>
                 
 
                   <TableContainer

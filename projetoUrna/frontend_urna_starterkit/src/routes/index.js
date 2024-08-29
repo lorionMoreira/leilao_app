@@ -25,7 +25,7 @@ import Componentes from "../pages/Componentes/index"
 
 //salas
 import SalaGerenciar from "../pages/Salas/Add/SalasGerenciar"
-
+import SalaGerenciarEdit from "../pages/Salas/Edit/SalasGerenciarEdit"
 //usuarios
 import Usuarios from "pages/Usuarios/index"
 
@@ -43,7 +43,7 @@ const authProtectedRoutes = [
 
   //Componentes
   { path: "/salas/adicionar", component: <SalaGerenciar/> },
-
+  { path: "/salas/editar/:uuid", component: <SalaGerenciarEdit/> },
   //usuarios
   { path: "/usuarios/adicionar", component: <Usuarios/> },
 

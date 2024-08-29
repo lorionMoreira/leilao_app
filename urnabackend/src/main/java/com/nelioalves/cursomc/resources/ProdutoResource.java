@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,9 +28,11 @@ import com.nelioalves.cursomc.domain.Produto;
 import com.nelioalves.cursomc.domain.Sala;
 import com.nelioalves.cursomc.domain.User;
 import com.nelioalves.cursomc.domain.Message.MessageType;
+import com.nelioalves.cursomc.dto.ProdutoDTO;
 import com.nelioalves.cursomc.dto.ProdutoInformationDTO;
 import com.nelioalves.cursomc.services.ProdutoService;
 import com.nelioalves.cursomc.services.SalaService;
+import com.nelioalves.cursomc.services.exceptions.AuthorizationException;
 import com.nelioalves.cursomc.services.ClienteService;
 import com.nelioalves.cursomc.services.ProdutoImagemService;
 
@@ -101,6 +104,29 @@ public class ProdutoResource {
                 
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/getbysalauuid2/{uuid}")
+    public ResponseEntity<List<ProdutoDTO>> getByUUID2(@PathVariable String uuid) {
+        // Assuming SalaService has a method to fetch SalaDTO by UUID
+        Sala sala = salaservice.findByUuid(uuid);
+
+        if (sala  != null) {
+           List<ProdutoDTO> entities = service.findProdutosBySalaId2(sala.getId());
+           return ResponseEntity.ok().body(entities);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteProduto(@PathVariable Integer id) {
+        try {
+            service.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     

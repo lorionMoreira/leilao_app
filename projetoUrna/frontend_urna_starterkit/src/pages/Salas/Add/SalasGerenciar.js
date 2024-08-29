@@ -3,6 +3,7 @@ import styles from "./style.module.css";
 import { del, get, post, postFile } from "../../../helpers/api_helper";
 import axios from 'axios';
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Row,
@@ -32,9 +33,7 @@ import classnames from "classnames"
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb"
 
-//Import Images
-import img1 from "../../../assets/images/product/img-1.png"
-import img7 from "../../../assets/images/product/img-7.png"
+
 // Formik validation
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -44,9 +43,9 @@ import { useFormik } from "formik";
 
 
 const SalasGerenciar = () => {
-
+  const navigate = useNavigate();
   //meta title
-  document.title="Checkout | Skote - React Admin & Dashboard Template";
+  document.title="Gerenciar Salas | Criar";
 
   const [activeTab, setactiveTab] = useState("1")
 
@@ -169,39 +168,42 @@ const SalasGerenciar = () => {
     console.log('foi1')
     try {
 
-        const apiUrl =process.env.REACT_APP_API_URL
+      const apiUrl =process.env.REACT_APP_API_URL
 
-        let API_URL2;
+      let API_URL2;
 
-        if(process.env.REACT_APP_DEFAULTAUTH == 'dev'){
+      if(process.env.REACT_APP_DEFAULTAUTH == 'dev'){
           API_URL2 = "http://localhost:8080";
-       }else{
+      }else{
           API_URL2 = "https://myec2lorion.zapto.org";
-       }
-       
-
-        const response = await post(`/api/salas/salvar/`, formData);
-        if(response.id){
-          const salaId = response.id;
-          for (let i = 0; i < products.length; i++) {
-            
-          const formDataf = new FormData();
-          formDataf.append('nome', products[i].nome);
-          formDataf.append('especificacao',products[i].especificacao);
-          formDataf.append('valor', products[i].valor);
-          formDataf.append('file', products[i].imagem);
-          
-          const response2 = await axios.post(`${API_URL2}/api/produtos/salvar2/${salaId}`, formDataf,{
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': mytoken
-            }});
-            console.log(products.length)
-            console.log("response2 ")
-            console.log(response2 )
-        }
       }
        
+      const response = await post(`/api/salas/salvar/`, formData);
+
+        if(response.id){
+
+          const salaId = response.id;
+
+          for (let i = 0; i < products.length; i++) {
+            
+            const formDataf = new FormData();
+            formDataf.append('nome', products[i].nome);
+            formDataf.append('especificacao',products[i].especificacao);
+            formDataf.append('valor', products[i].valor);
+            formDataf.append('file', products[i].imagem);
+            
+            const response2 = await axios.post(`${API_URL2}/api/produtos/salvar2/${salaId}`, formDataf,{
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': mytoken
+              }});
+              console.log(products.length)
+              console.log("response2 ")
+              console.log(response2 )
+          }
+        }
+        alert('Sala cadastrada com sucesso!')
+        navigate('/dashboard');
 
     } catch (error) {
       console.log(error)
@@ -215,7 +217,7 @@ const SalasGerenciar = () => {
       <div className="page-content">
         <Container fluid>
           {/* Render Breadcrumb */}
-          <Breadcrumbs title="Ecommerce" breadcrumbItem="Checkout" />
+          <Breadcrumbs title="Gerenciar Salas" breadcrumbItem="Criar sala" />
 
           <div className="checkout-tabs">
             <Row>

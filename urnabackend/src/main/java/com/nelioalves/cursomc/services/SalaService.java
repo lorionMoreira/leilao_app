@@ -1,6 +1,9 @@
 package com.nelioalves.cursomc.services;
 
 import java.util.UUID;
+
+import javax.transaction.Transactional;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.nelioalves.cursomc.domain.Sala;
-
+import com.nelioalves.cursomc.domain.User;
 import com.nelioalves.cursomc.dto.SalaDTO;
 import com.nelioalves.cursomc.repositories.SalaRepository;
 import com.nelioalves.cursomc.resources.utils.UUIDUtils;
+import com.nelioalves.cursomc.services.exceptions.AuthorizationException;
 import com.nelioalves.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -26,6 +30,9 @@ public class SalaService {
 
     @Autowired
     private SalaRepository repo;
+
+    @Autowired
+    private ClienteService clienteService;
     
 	public Sala find(Integer id) {
 		
@@ -97,6 +104,23 @@ public class SalaService {
         obj.setNcurrent(obj.getNmax());
         obj.setEstado("inicio");
         return repo.save(obj);
+    }
+
+    @Transactional
+    public void deleteByUuid(String uuid) {
+        Sala sala = findByUuid(uuid);
+
+        User user = clienteService.findMySelf();
+
+        if (!sala.getUser().equals(user)) {
+            throw new AuthorizationException("You are not authorized to delete this Sala.");
+        }
+
+        try {
+            repo.delete(sala);
+        } catch (Exception e) {
+            throw new AuthorizationException("An error occurred while trying to delete the Sala.", e);
+        }
     }
     /*
     @EventListener

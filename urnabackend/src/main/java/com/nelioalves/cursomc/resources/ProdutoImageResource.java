@@ -56,4 +56,43 @@ public class ProdutoImageResource {
         }
         
     }
+
+    @GetMapping("/getphoto2/{productId}")
+    public ResponseEntity<ByteArrayResource> getPhotoOfProduct2(@PathVariable Integer productId) {
+        List<ProdutoImage> produtoImages = service.findbyProdutoId(productId);
+        
+        if (produtoImages.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        ProdutoImage produtoImage = produtoImages.get(0);
+
+        try {
+            Path path = Paths.get(produtoImage.getImagePath());
+            byte[] imageBytes = Files.readAllBytes(path);
+
+            // Determine content type
+            String contentType = Files.probeContentType(path);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            // Determine file name
+            String fileName = path.getFileName().toString();
+
+            // Create a ByteArrayResource from the image bytes
+            ByteArrayResource resource = new ByteArrayResource(imageBytes);
+
+            // Return the image with appropriate headers
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                    .header(HttpHeaders.CONTENT_TYPE, contentType)
+                    .contentLength(imageBytes.length)
+                    .body(resource);
+        } catch (IOException e) {
+            // Handle file not found or IO exception
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

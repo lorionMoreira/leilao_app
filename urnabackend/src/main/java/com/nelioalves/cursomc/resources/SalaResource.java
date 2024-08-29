@@ -16,6 +16,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,7 @@ import com.nelioalves.cursomc.services.ClienteService;
 import com.nelioalves.cursomc.services.SalaService;
 
 import com.nelioalves.cursomc.services.WebSocketUserService;
+import com.nelioalves.cursomc.services.exceptions.AuthorizationException;
 
 import org.springframework.context.ApplicationEventPublisher;
 import com.nelioalves.cursomc.domain.User;
@@ -53,7 +55,7 @@ public class SalaResource {
     
     @Autowired
     private ClienteService clienteservice;
-        
+
     @Autowired
     private WebSocketUserService websocketuserservice;
     
@@ -107,6 +109,16 @@ public class SalaResource {
     	
         Page<Sala> entities = service.findWithPagination(pageNumber, pageSize);
         return ResponseEntity.ok().body(entities);
+    }
+
+    @DeleteMapping("/delete/{uuid}")
+    public ResponseEntity<String> deleteSala(@PathVariable String uuid) {
+        try {
+            service.deleteByUuid(uuid);
+            return ResponseEntity.noContent().build();
+        } catch (AuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
     
     @GetMapping("/getbyuuid/{uuid}")
