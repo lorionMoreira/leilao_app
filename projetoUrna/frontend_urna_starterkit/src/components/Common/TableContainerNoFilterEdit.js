@@ -18,11 +18,9 @@ const TableContainer = ({
   columns,
   data,
   className,
-  handleInputSearch,
-  onPageChange ,
-  showButtonLink ,
   buttonLink,
-  buttonText
+  handleSalaClicks,
+  handleProdutoClicks
 }) => {
   const {
     getTableProps,
@@ -42,20 +40,11 @@ const TableContainer = ({
     useExpanded,
     usePagination
   );
-  const [searchTerm, setSearchTerm] = useState('');
+  
   const generateSortingIndicator = column => {
     return column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : "";
   };
-  const handleInputSearchff = () => {
-    if (searchTerm.trim() !== '') {
-      handleInputSearch(searchTerm);
-    }
-  };
 
-  const handleInputClean = () => {
-    setSearchTerm('')
-    onPageChange(1)
-  };
 
   return (
     <Fragment>
@@ -64,7 +53,12 @@ const TableContainer = ({
           <Link to={buttonLink} className="d-inline-block mx-2">
             <button className="btn btn-primary
               bg-gradient btn-rounded waves-effect
-              waves-light mt-3" >Editar sala</button>
+              waves-light mt-3" onClick={handleSalaClicks} >Editar sala</button>
+          </Link>
+          <Link to={buttonLink} className="d-inline-block mx-2">
+            <button className="btn btn-primary
+              bg-gradient btn-rounded waves-effect
+              waves-light mt-3" onClick={handleProdutoClicks} >Adicionar Produto</button>
           </Link>
         </Col>
       </Row>
